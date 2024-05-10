@@ -14,6 +14,10 @@ const database_config = {};
 // Global connection pool
 let pool = null;
 
+// Available procedures for this user
+const get_procedures_file_path = path.join(__dirname, 'staticqueries', 'get-procedures.sql');
+let procedures = [];
+
 /**
 * Function to startup the module functionality, configures the module and returns its functions
 * 
@@ -89,6 +93,9 @@ function setCredentials(credentials)
 
     // Create or flush pool with the new configuration
     flushPool();
+
+    // Get or flush procedures available for this user
+    flushProcedures();
 }
 
 /**
@@ -105,6 +112,54 @@ function flushPool()
         throw err;
     }
 }
+
+/**
+ * Funtion to get or flush the available procedures for the current user
+ * Makes it easy to call procedure names without typoing by making an object with them
+ */
+function flushProcedures(){
+    const getProceduresQuery = fs.readFileSync(get_procedures_file_path, 'utf-8').replace(/--.*?\n/g, ' ').replace(/\/\*.*?\*\//g, '').replace(/\s+/g, ' ');;
+    query(getProceduresQuery, [])
+    .then((rows) => {
+        procedures = rows;
+    })
+    .catch((error) => {
+        
+    });
+}
+
+/**
+ * Function to query the database with a request of any type
+ * @param {string} sql The sql query (uses "?" as parameter placeholders)
+ * @param {object} params The array of parameters to be inserted into the query
+ * @returns {object} The rows that where fetched by the DBMS and extra info related to te query
+ * @throws {Error} if there is any issue with the pool or the query, probably wrong credentials or parameters
+ */
+function query(sql, params){
+    return pool.getConnection()
+    .then((conn) => {
+        return conn.query(sql, params)
+        .then((rows) => {
+            return rows;
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            conn.release();
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+}
+
+
+/**
+ * Function to CALL a procedure of the database (which should be configured by the DB admin for this user)
+ * @param {string} procedure The name of the procedure
+ * @param {object} params The array of params to be inserted into de procedure
+ */
 
 /*
 function get(resource, data)
@@ -250,24 +305,7 @@ function post(resource, data)
     return query(rawSql, params);
 }
 
-function query(sql, params){
-    return pool.getConnection()
-    .then((conn) => {
-        return conn.query(sql, params)
-        .then((rows) => {
-            return rows;
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-        .finally(() => {
-            conn.release();
-        });
-    })
-    .catch((err) => {
-        console.log(err);
-    });
-}
+
 
 function timeStamp(){
     const now = new Date();
