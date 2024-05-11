@@ -15,13 +15,13 @@ const database_config = {};
 let pool = null;
 
 // Available procedures for this user
-const get_procedures_file_path = path.join(__dirname, 'staticqueries', 'get-procedures.sql');
-let procedures = [];
+const get_procedures_file_path = path.join(__dirname, 'staticqueries', 'get_procedures.sql');
+let procedures = {};
 
 /**
-* Function to startup the module functionality, configures the module and returns its functions
+* Function to startup the module functionality, configures the module and returns its functions.
 * 
-* Call the module as "require(db_module_path).innit(database_config, credentials)"
+* Call the module as "require(db_module_path).innit(database_config, credentials)".
 * @param {object} config The host, port, database and other configurations of the database (reffer to mariadb documentation to find configuration names)
 * @example
 * {
@@ -51,8 +51,8 @@ function init(config, credentials){
     return {
         setConfig,
         setCredentials,
-        get,
-        post
+        flush,
+        call
     }
 }
 
@@ -73,8 +73,8 @@ function setConfig(config)
     // Merge configurations (Adds or updates existing credentials)
     database_config.params = { ...database_config.params, ...config };
 
-    // Create or flush pool with the new configuration
-    flushPool();
+    // Flush
+    flush();
 }
 
 /**
@@ -91,6 +91,14 @@ function setCredentials(credentials)
     // Merge credentials (Adds or updates existing credentials)
     database_config.credentials = { ...config.credentials, ...credentials };
 
+    // Flush api
+    flush();
+}
+
+/**
+ * Function to flush credentials, configuration and available procedures
+ */
+function flush(){
     // Create or flush pool with the new configuration
     flushPool();
 
@@ -99,13 +107,13 @@ function setCredentials(credentials)
 }
 
 /**
- * Function to create or update the pool of connections with the database
+ * Function to create or update the pool of connections with the database.
  * @throws {Error} if configuration is wrong or an event of major cause happens (unknown error)
  */
-function flushPool()
+async function flushPool()
 {
     try{
-        pool = mariadb.createPool({ ...database_config.params, ...database_config.credentials });
+        pool = await mariadb.createPool({ ...database_config.params, ...database_config.credentials });
     }
     catch(err){
         console.error('Error creating or updating database pool:\n', err);
@@ -114,26 +122,40 @@ function flushPool()
 }
 
 /**
- * Funtion to get or flush the available procedures for the current user
+ * Funtion to get or flush the available procedures for the current user.
+ * 
  * Makes it easy to call procedure names without typoing by making an object with them
  */
 function flushProcedures(){
     const getProceduresQuery = fs.readFileSync(get_procedures_file_path, 'utf-8').replace(/--.*?\n/g, ' ').replace(/\/\*.*?\*\//g, '').replace(/\s+/g, ' ');;
     query(getProceduresQuery, [])
     .then((rows) => {
-        procedures = rows;
+        rows.forEach((row) => {
+            procedures[row] = row;
+        });
     })
-    .catch((error) => {
-        
+    .catch((err) => {
+        console.log("Error on flushing procedures for the current user" + err);
     });
 }
 
 /**
- * Function to query the database with a request of any type
- * @param {string} sql The sql query (uses "?" as parameter placeholders)
- * @param {object} params The array of parameters to be inserted into the query
- * @returns {object} The rows that where fetched by the DBMS and extra info related to te query
- * @throws {Error} if there is any issue with the pool or the query, probably wrong credentials or parameters
+ * Function to call a procedure.
+ * @param {string} procedure The name of the procedure you want to call.
+ * 
+ * Procedures available for this user are stored at module_mame.procedures.* (procedure name as variable name).
+ * @returns {object} The requested rows or data retrived by the procedure
+ */
+function call(procedure){
+    return query('CALL ?;', [procedure]);
+}
+
+/**
+ * Function to query the database with a request of any type.
+ * @param {string} sql The sql query (uses "?" as parameter placeholders).
+ * @param {object} params The array of parameters to be inserted into the query.
+ * @returns {object} The rows that where fetched by the DBMS and extra info related to te query.
+ * @throws {Error} if there is any issue with the pool or the query, probably wrong credentials or parameters.
  */
 function query(sql, params){
     return pool.getConnection()
@@ -156,9 +178,9 @@ function query(sql, params){
 
 
 /**
- * Function to CALL a procedure of the database (which should be configured by the DB admin for this user)
- * @param {string} procedure The name of the procedure
- * @param {object} params The array of params to be inserted into de procedure
+ * Function to CALL a procedure of the database (which should be configured by the DB admin for this user).
+ * @param {string} procedure The name of the procedure.
+ * @param {object} params The array of params to be inserted into de procedure.
  */
 
 /*
