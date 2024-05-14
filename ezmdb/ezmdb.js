@@ -1,12 +1,18 @@
-// PONER UN COMANDO setConfig para poder poner la configuración desde el main.js sin tener que acceder al módulo, este comando reescribiría el fichero config.js y permitiría poder cambiar la configuración en runtime. También podría hacer que se puedan añadir configuraciones, en lugar de solo actualizar todas
+/**
+ * Module : Easy Maria DB (ezmdb) - v.1.0
+ * Author : Code by Miguel Ríos Marcos
+ * Description : A simple interface module to request a MariaDB DBMS with basic and complex queries
+ * Dependencies : 'mariadb', 'fs' and 'path'
+ * License : MIT License
+ */
+
 const mariadb = require('mariadb');
 const fs = require('fs');
 const path = require('path');
-const handlebars = require('handlebars');
 
 // Module configuration
 const config_file_path = path.join(__dirname, 'config.json');
-const module_config = JSON.parse(fs.readFileSync(config_file_path, 'utf-8'));
+const module_config = JSON.parse(fs.readFileSync(config_file_path, 'utf-8')); // Just for the record, there isn't any module configuration available yet, this object is not used
 
 // Configuration of the access to the database
 const database_config = {};
@@ -16,7 +22,7 @@ let pool = null;
 
 // Available procedures for this user
 const get_procedures_file_path = path.join(__dirname, 'staticqueries', 'get_procedures.sql');
-let procedures = {};
+let procedures = {}; // Public access of procedures names available for this user
 
 /**
 * Function to startup the module functionality, configures the module and returns its functions.
@@ -49,6 +55,7 @@ function init(config, credentials){
 
     // Return module functions
     return {
+        procedures,
         setConfig,
         setCredentials,
         flush,

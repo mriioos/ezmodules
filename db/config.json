@@ -1,7 +1,0 @@
-{
-    "methods" : {
-        "get" : "get",
-        "post" : "post",
-        "multiple" : "mult"
-    }
-}
