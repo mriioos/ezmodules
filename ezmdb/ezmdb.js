@@ -146,7 +146,7 @@ function flushProcedures(){
     });
 }
 
-/**
+/** 
  * Function to call a procedure previously stored in you database.
  * @param {string} procedure The name of the procedure you want to call.
  * @param {Array} params The array of parameters accepted by the procedure.
