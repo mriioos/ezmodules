@@ -10,7 +10,7 @@ I want to assure you that I am not aware of any intentional errors or malfunctio
 
 Please note that at the time of creating this repository, the uploaded modules are not functional; they were created for specific environments. Please refrain from attempting to use them, as they will not work out of the box. I've initiated this repository to create standalone versions of each module, and eventually, they will be fully functional.
 
-Manu of this modules work almost as wrappers of the libraries they use, I will add some documentation file in every module called module_name.pdf with the extended functionality when the first version of each is released.
+Many of this modules work almost as wrappers of the libraries they use, I will add some documentation file in every module called module_name.pdf with the extended functionality when the first version of each is released.
 
 Thank you for taking the time to read this. Any advice, suggestions, or mentions are welcome. If you have feedback or would like to contribute, feel free to open an issue or submit a pull request.
 
