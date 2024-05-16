@@ -72,6 +72,7 @@ function init(credentials, defaults){
         flush,
         send,
         sendHTML,
+        sendTemplateHTML,
         templates
     }
 }
@@ -145,12 +146,19 @@ function flush(){
  * 
  * If the name is already in use, the template will be updated.
  * 
+ * Please, have in mind that weird template names will be normalized to an alphanumeric + underscore encoding
+ * 
  * @param {string} html The html (utf-8) template
  * 
- * The usage of this funciton is not completely obligatory, it is just a confort thing.
+ * The usage of this function is not completely obligatory, it is just a confort thing.
  */
 function saveTemplate(name, html){
-    templates[name] = name;
+    const normName = name
+    .replace(/[^\w\s.-]/g, '')  // Remove characters not allowed in filenames
+    .trim()                     // Trim leading and trailing whitespace
+    .replace(/\s+/g, '_');      // Replace spaces with underscores
+
+    templates[normName] = normName;
 
     fs.writeFileSync(path.join(__dirname, 'templates', `${templates[name]}.html`), html, 'utf-8');
 }
@@ -162,7 +170,7 @@ function saveTemplate(name, html){
  * 
  * All available template names are available at module_name.templates.*
  * 
- * The usage of this funciton is not completely obligatory, it is just a confort thing.
+ * The usage of this function is not completely obligatory, it is just a confort thing.
  */
 function removeTemplate(name){
     delete templates[name];
@@ -211,7 +219,8 @@ function send(to, subject, body){
     });
 }
 
-/** Function to send HTML based mails.
+/** 
+ * Function to send HTML based mails.
  * 
  * @param {string} to The email of the user you want to send the message to.
  * @example "reciveroftheemail@domain.ext"
@@ -232,13 +241,26 @@ function sendHTML(to, subject, htmlBody){
 
 // Para enviar utilizando un template guardado
 /**
+ * Function to send HTML based mails using a template.
  * 
- * @param {string} to 
- * @param {string} subject 
- * @param {string} template 
+ * In order to use this function, you must save the HTML templates in the module, and call their names using module_name.templates.*
+ * @see saveTemplate
+ * @see removeTemplate
+ * 
+ * Template names are stored as variable names to reduce typoing.
+ * 
+ * @param {string} to The email of the user you want to send the message to.
+ * @example "reciveroftheemail@domain.ext"
+ * 
+ * @param {string} subject The subject of the email.
+ * @example "Very important subject"
+ * 
+ * @param {string} template The name of the template that you want to use for this email.
+ * @example "my_template_file_name"
+ * 
  * @param {object} data 
  */
-function sendHTML(to, subject, template, data){
+function sendTemplateHTML(to, subject, template, data){
 
     // Read the selected template
     fs.readFile(`./modules/mail/templates/${template}.html`, 'utf-8')
@@ -247,12 +269,8 @@ function sendHTML(to, subject, template, data){
         // Compile the template
         const template = handlebars.compile(source);
 
-        // Send the mail
-        transporter.sendMail({
-            to : to,
-            subject : subject,
-            html : template(data)
-        });
+        // Send the HTML mail
+        sendHTML(to, subject, template(data));
     });
 }
 
