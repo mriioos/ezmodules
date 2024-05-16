@@ -300,8 +300,6 @@ function sendTemplateHTML(to, subject, template, data){
     });
 }
 
-
-
 module.exports = { 
     init,
     saveTemplate,
