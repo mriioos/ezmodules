@@ -1,7 +1,9 @@
 /**
- * Module : Easy Maria DB (ezmdb) - v.1.0
- * Author : Code by Miguel Ríos Marcos
- * Description : A simple interface module to request a MariaDB DBMS with basic and complex queries
+ * Easy Maria DB (ezmdb) - v.1.0
+ * Code by Miguel Ríos Marcos
+ * 
+ * A simple interface module to request a MariaDB DBMS with basic and complex queries
+ * 
  * Dependencies : 'mariadb', 'fs' and 'path'
  * License : MIT License
  */
