@@ -1,5 +1,5 @@
 /**
- * Easy Maria DB (ezmdb) - v.1.0
+ * Easy Mail (ezmail) - v.1.0
  * Code by Miguel Ríos Marcos
  * 
  * A simple interface module to send basic and HTML emails using nodemailer module
@@ -143,30 +143,42 @@ function flush(){
  * Function to save HTML templates (makes use of handlebars)
  * 
  * @param {string} name The name with which te template will be saved.
+ * @example "my_template_name"
  * 
  * If the name is already in use, the template will be updated.
  * 
- * Please, have in mind that weird template names will be normalized to an alphanumeric + underscore encoding
+ * Template names must have an alphanumeric + underscore encoding, the regex used is /^[a-zA-Z0-9_]+$/
  * 
  * @param {string} html The html (utf-8) template
  * 
  * The usage of this function is not completely obligatory, it is just a confort thing.
  */
 function saveTemplate(name, html){
-    const normName = name
-    .replace(/[^\w\s.-]/g, '')  // Remove characters not allowed in filenames
-    .trim()                     // Trim leading and trailing whitespace
-    .replace(/\s+/g, '_');      // Replace spaces with underscores
+    
+    if(!isValidFileName(name)){
+        console.error("Error on saving template: File name isn't valid : " + name + "\n File name must match the regex : /^[a-zA-Z0-9_]+$/");
+        return;
+    }
 
-    templates[normName] = normName;
+    templates[name] = name;
 
     fs.writeFileSync(path.join(__dirname, 'templates', `${templates[name]}.html`), html, 'utf-8');
+}
+
+/**
+ * Function to check if a name is valid for creating a file
+ * @param {string} name The name of the file to be tried
+ * @returns true if name is valid, false if isn't
+ */
+function isValidFileName(name){
+    return /^[a-zA-Z0-9_]+$/.test(name);
 }
 
 /**
  * Function to save HTML templates (makes use of handlebars)
  * 
  * @param {string} name The name with which te template is saved.
+ * @example "my_template_name"
  * 
  * All available template names are available at module_name.templates.*
  * 
@@ -256,14 +268,28 @@ function sendHTML(to, subject, htmlBody){
  * @example "Very important subject"
  * 
  * @param {string} template The name of the template that you want to use for this email.
- * @example "my_template_file_name"
+ * @example "my_template_name"
  * 
- * @param {object} data 
+ * @param {object} data The data to be used to substitute the HTML template placeholders.
+ *  
+ * Please, reffer to handlebars documentation to understand how this placeholders work and how to embed data into them.
+ * 
+ * @example
+ * {
+ *   "placeholdername" : "data",
+ *   "placeholdersection" : {
+ *      "localplaceholder1" : "data1",
+ *      "localplaceholder2" : "data2"
+ *   },
+ *   "placeholderlist" : [
+ *      "data3", "data4", "data5"
+ *   ]
+ * }
  */
 function sendTemplateHTML(to, subject, template, data){
 
     // Read the selected template
-    fs.readFile(`./modules/mail/templates/${template}.html`, 'utf-8')
+    fs.readFile(path.join(__dirname, 'templates', `${template}.html`), 'utf-8')
     .then((source) => {
 
         // Compile the template
@@ -280,42 +306,4 @@ module.exports = {
     init,
     saveTemplate,
     removeTemplate,
- }
-
-/*
-const credentials = JSON.parse(fs.readFileSync(path.join(__dirname, 'mail', 'credentials.json'),'utf-8'));
-const defaults = JSON.parse(fs.readFileSync('./modules/mail/defaults.json', 'utf-8'));
-const transporter = nodemailer.createTransport(credentials, defaults);
-transporter.verify(function (error, success) {
-    if (error) {
-        console.log("Mail service error");
-        console.log(error);
-    } else {
-        console.log("Mail service successfully raised");
-    }
-});
-
-function send(to, subject, text){
-    transporter.sendMail({
-        to : to,
-        subject : subject,
-        text : text
-    });
 }
-
-function sendHTML(to, subject, resource, data){
-    const source = fs.readFileSync(`./modules/mail/templates/${resource}.html`, 'utf-8');
-    const template = handlebars.compile(source);
-
-    transporter.sendMail({
-        to : to,
-        subject : subject,
-        html : template(data)
-    });
-}
-
-module.exports = {
-    send,
-    sendHTML
-}
-*/
