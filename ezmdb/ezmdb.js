@@ -55,6 +55,9 @@ function init(config, credentials){
     // Set credentials
     setCredentials(credentials);
 
+    // Flush api
+    flush();
+
     // Return module functions
     return {
         procedures,
@@ -81,9 +84,6 @@ function setConfig(config)
 {
     // Merge configurations (Adds or updates existing credentials)
     database_config.params = { ...database_config.params, ...config };
-
-    // Flush
-    flush();
 }
 
 /**
@@ -99,9 +99,6 @@ function setCredentials(credentials)
 {
     // Merge credentials (Adds or updates existing credentials)
     database_config.credentials = { ...config.credentials, ...credentials };
-
-    // Flush api
-    flush();
 }
 
 /**
@@ -137,6 +134,7 @@ async function flushPool()
  */
 function flushProcedures(){
     const getProceduresQuery = fs.readFileSync(get_procedures_file_path, 'utf-8').replace(/--.*?\n/g, ' ').replace(/\/\*.*?\*\//g, '').replace(/\s+/g, ' ');;
+    
     query(getProceduresQuery, [])
     .then((rows) => {
         rows.forEach((row) => {
