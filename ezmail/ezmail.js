@@ -25,10 +25,11 @@ let transporter;
 /**
  * Function to start up module parameters.
  * 
- * Functions saveTemplate and removeTemplate are not instance related functions, they are treated as "static like" functions thus only being able to be called by the default require('mail') consturctor.
+ * Call the module as "require(ezmail_module_path).init(credentials, defaults)".
+ * 
+ * Functions saveTemplate and removeTemplate are not instance related functions, they are treated as "static like" functions thus only being able to be called by the default require('mail') constructor.
  * 
  * This should be useful for cluster architectures (to save the templates before forking workers, thus preventing multiple writing to the templates files)
- *
  * @see saveTemplate
  * @see removeTemplate
  * 
