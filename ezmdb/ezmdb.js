@@ -29,7 +29,7 @@ let procedures = {}; // Public access of procedures names available for this use
 /**
 * Function to startup the module functionality, configures the module and returns its functions.
 * 
-* Call the module as "require(db_module_path).innit(database_config, credentials)".
+* Call the module as "require(db_module_path).init(database_config, credentials)".
 * @param {object} config The host, port, database and other configurations of the database (reffer to mariadb documentation to find configuration names)
 * @example
 * {
