@@ -152,7 +152,7 @@ function flush(){
  * 
  * @param {string} html The html (utf-8) template
  * 
- * The usage of this function is not completely obligatory, it is just a confort thing.
+ * The usage of this function is not mandatiry, it is just a confort util.
  */
 function saveTemplate(name, html){
     

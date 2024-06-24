@@ -134,7 +134,7 @@ function setConfig({ key, iv }){
 /**
  * Function to get the hash value of a string.
  * @param {string} str The string to be hashed.
- * @param {string} salt The salt (32 bytes) to be applied to the string.
+ * @param {string} salt (Optional) The salt (32 bytes) to be applied to the string.
  * 
  * If the salt is not specified, a new one will be created.
  * 
