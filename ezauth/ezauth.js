@@ -4,7 +4,7 @@
  * 
  * A simple middleware module designed to provide the user a simple interface for async authentication requests
  * 
- * Dependencies : 
+ * Dependencies : none
  * License : MIT License
  */
 
@@ -18,7 +18,7 @@ let contexts = {};
  * @param {Object} contexts_object An object that stores the context name and the functions that are going to be used for authorizing in each context.
  * @example 
  * {
- *  context : auth_functions, // Array of functions to check in this context
+ *  context : [ auth_function_1, auth_functon_2, ... ], // Array of functions to check in this context
  *  authClient : [ checkSession ],
  *  authAdmin : [ checkCookie, checkSessionTime, verifyPermits ],
  *  authOwner : [ checkCookie, checkSessionTime, verifyPermits, verifyIP ]
@@ -109,11 +109,11 @@ async function auth(auth_functions, credentials){
             // Check if any auth proccess has failed
             if(promise.status === 'rejected'){
                 throw new Error('Authorization was rejected - ', promise.reason.message);
-            };
+            }
 
             // If successfull, push returned data into the array
             data.push(promise.value);
-        })
+        });
 
         return data;
     });
