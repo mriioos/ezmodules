@@ -4,7 +4,7 @@
  * 
  * A simple interface module to encrypt, decrypt and hash data using sha256
  * 
- * Dependencies : 'path', 'fs' and 'crypto'
+ * Dependencies : 'path', 'fs', 'path' and 'crypto'
  * License : MIT License
  */
 
@@ -12,7 +12,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 
-let config = fs.readFileSync(path.join(__dirname, 'key.json'));
+let config = JSON.parse(fs.readFileSync(path.join(__dirname, 'key.json'), 'utf-8'));
 
 // Check if default values exist, if they don't, create new ones and store them
 if(!config.key || !config.iv){
@@ -77,17 +77,17 @@ function setDefaultConfig({ key, iv }){
     };
 
     // Move the current config to a new file and store it in the log
-    fs.rename(path.join(__dirname, 'key.json'), path.join(__dirname, 'log', `key_${Date.now('.')}.json`), (err) => {
+    try{
+        fs.mkdirSync(path.join(__dirname, 'log'));
+        fs.renameSync(path.join(__dirname, 'key.json'), path.join(__dirname, 'log', `key_${Date.now('.')}.json`));
         
-        // Ensure that there wasn't an error
-        if(err){
-            console.error('Error saving new default configuration (On saving old config) : ', err);
-        } 
-        else{
-            // Overwrite key.json
-            fs.writeFileSync(path.join(__dirname, 'key.json'), JSON.stringify(newConfig));
-        }
-    });
+        // Overwrite key.json
+        fs.writeFileSync(path.join(__dirname, 'key.json'), JSON.stringify(newConfig));
+    }
+    catch(err){
+        console.error('Error saving new default configuration (On saving old config) : ', err);
+    };
+
 }
 
 /**
