@@ -4,12 +4,13 @@
  * 
  * A simple interface module to encrypt, decrypt and hash data using sha256
  * 
- * Dependencies : 'fs' and 'crypto'
+ * Dependencies : 'path', 'fs' and 'crypto'
  * License : MIT License
  */
 
-const crypto = require('crypto');
+const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 
 let config = fs.readFileSync(path.join(__dirname, 'key.json'));
 
