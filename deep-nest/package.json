@@ -1,0 +1,31 @@
+{
+  "name": "json-deep-nest",
+  "version": "1.0.0",
+  "description": "An extension package of Object.prototype class that lets you get and set deeply nested properties, even if some in between keys don't exist.",
+  "main": "json-deep-nest.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "(https://github.com/mriioos/ezmodules.git)"
+  },
+  "keywords": [
+    "npm",
+    "deep-nest",
+    "nested",
+    "json",
+    "values",
+    "keys",
+    "value",
+    "key",
+    "deep",
+    "nest",
+    "property",
+    "object",
+    "prototype",
+    "class"
+  ],
+  "author": "Miguel Ríos",
+  "license": "ISC"
+}

@@ -8,7 +8,7 @@
  * Additionally, you can call the functions like (modulename).set or (modulename).get
  * 
  * Dependencies : none
- * License : MIT License
+ * License : ISC
  */
 
 /**
@@ -82,13 +82,14 @@ function getDeeplyNestedProperty(obj, vPath){
 }
 
 // Make methods work from any object directly within itself
-Object.prototype.set = function(vPath, value){
+// Deactivated by now
+/*Object.prototype.set = function(vPath, value){
     setDeeplyNestedProperty(this, vPath, value);
 }
 
 Object.prototype.get = function(vPath){
     return getDeeplyNestedProperty(this, vPath);
-}
+}*/
 
 module.exports = { 
     set : setDeeplyNestedProperty, 
