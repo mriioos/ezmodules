@@ -1,5 +1,5 @@
 /**
- * Deep Nest (dnest) - v.1.0
+ * Easy Deep Nest (ezdn) - v.1.0
  * Code by Miguel Ríos Marcos
  * 
  * A simple module to deep nest properties into an object and get deep nested properties from the object.
