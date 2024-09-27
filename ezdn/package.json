@@ -1,6 +1,6 @@
 {
   "name": "ezdeepnest",
-  "version": "1.0.3",
+  "version": "1.0.6",
   "description": "An extension package of Object.prototype class that lets you get and set deeply nested properties, even if some in between keys don't exist.",
   "main": "ezdeepnest.js",
   "scripts": {

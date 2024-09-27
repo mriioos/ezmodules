@@ -16,7 +16,8 @@
  * @param {object} obj Root object.
  * @param {string} vPath To deeply nested property.
  * @example /vitrual/path/to/deeply/nested/property/file.js/lang
- * @param {*} value To be set to deeply nested property.
+ * @param {string | object} value To be set to deeply nested property.
+ * @returns {{parent : object, key : string}} - An object that conains a refference to the last created object and the key name
  */
 function setDeeplyNestedProperty(obj, vPath, value){
 
@@ -44,6 +45,12 @@ function setDeeplyNestedProperty(obj, vPath, value){
     // Store value at last key
     const last = keys[keys.length - 1];
     aux[last] = value;
+
+    // Return last created object and key name
+    return {
+        parent : aux,
+        key : last
+    }
 }
 
 /**
